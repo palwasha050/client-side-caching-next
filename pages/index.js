@@ -1,31 +1,30 @@
-import { useEffect, useState } from 'react';
-import api from './api/api';
+import React, { useState, useEffect } from 'react';
 
-const Posts = () => {
-  const [posts, setPosts] = useState(null);
+function Home() {
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get('/posts');
-        setPosts(response.data);
-      } catch (error) {
-        if (error.isCache) {
-          setPosts(error.data);
-        } else {
-          console.error(error);
-        }
-      }
-    };
+    async function fetchData() {
+      const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+      const json = await res.json();
+      setData(json);
+    }
 
     fetchData();
   }, []);
 
+  // Render data...
   return (
     <div>
-      {posts && posts.map((post) => <div key={post.id}>{post.title}</div>)}
+      <h1>Posts</h1>
+      <ul>
+        {data &&
+          data.map((post) => (
+            <li key={post.id}>{post.title}</li>
+          ))}
+      </ul>
     </div>
   );
-};
+}
 
-export default Posts;
+export default Home;
